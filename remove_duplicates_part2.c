@@ -1,23 +1,59 @@
 /*
 param nums --> points to 0th index of integer array
-param numsSize --> 1-based size of integer array nums such tha (numsSize-1)[nums] gets last element
+param len --> 1-based size of integer array nums such tha (len-1)[nums] gets last element
 */
 
-// This version beats 92% of runtimes and uses less memory than 84.95% cases 
+// https://leetcode.com/problems/remove-duplicates-from-sorted-array-ii/solutions/6643714/beats-9836-of-runtimes-by-jdbryan-1g8c
+// This version beats 98.36% of runtimes 
 
-int removeDuplicates(int* nums, int numsSize) 
-{
-    if(numsSize <= 2) return numsSize;
-    int i = 1, w=1, c=1;
-    for(;i<numsSize;i++)
+#include <string.h>
+
+int removeDuplicates(int* nums, int len) {
+
+    if (len <= 2) return len;
+    
+    // Linear time complexity for larger cases 
+    if(len > 30) 
     {
-        if(nums[i]==nums[i-1]) c++;
-        else c=1;
-        if(c <= 2) 
+        int i = 1, w=1, c=1;
+        for(;i<len;i++)
         {
-            nums[w]=nums[i];
-            w++;
+            if(nums[i]==nums[i-1]) c++;
+            else c=1;
+            if(c <= 2) 
+            {
+                nums[w]=nums[i];
+                w++;
+            }
+        }
+        return w;
+    }
+
+    // Polynomial time complexity for smaller cases
+    int write = 1;
+    int count = 1;
+    int newLen = len;
+
+    for (int read = 1; read < newLen; read++) {
+        if (nums[read] == nums[write - 1]) {
+            count++;
+            if (count <= 2) {
+                if (write != read) {
+                    nums[write] = nums[read];
+                }
+                write++;
+            } else {
+                memmove(&nums[write], &nums[read + 1], (newLen - read - 1) * sizeof(int));
+                newLen--;
+                read--;
+            }
+    } else {
+            if (write != read) {
+                nums[write] = nums[read];
+            }
+            write++;
+            count = 1;
         }
     }
-    return w;
+    return write;
 }
